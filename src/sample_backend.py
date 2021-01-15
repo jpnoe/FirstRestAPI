@@ -58,6 +58,12 @@ def get_users():
             if user['name'] == search_username and user['job'] == search_job:
                subdict['users_list'].append(user)
          return subdict
+      if search_job :
+         subdict = {'users_list' : []}
+         for user in users['users_list']:
+            if user['job'] == search_job:
+               subdict['users_list'].append(user)
+         return subdict
       if search_username :
          subdict = {'users_list' : []}
          for user in users['users_list']:
@@ -69,7 +75,7 @@ def get_users():
       userToAdd = request.get_json()
       userToAdd['id'] = generate_ID()
       users['users_list'].append(userToAdd)
-      resp = jsonify(success=True)
+      resp = jsonify({"id":str(userToAdd['id']), "name":str(userToAdd['name']), "job":str(userToAdd['job'])})
       resp.status_code = 201
       return resp
 
@@ -81,16 +87,15 @@ def get_user(id):
          for user in users['users_list']:
             if user['id'] == id:
                return user
-            return ({})
+         return ({})
       return users
    elif request.method == 'DELETE':
       resp = jsonify(success=False)
       resp.status_code = 404;
       if id :
-         found = 0;
          for i, user in enumerate(users['users_list']):
             if user['id'] == id:
                users['users_list'].pop(i);
-               resp = jsonify(success=True)
+               resp = jsonify({"user deleted" : user})
                resp.status_code = 200
       return resp
